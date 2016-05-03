@@ -1,0 +1,19 @@
+Package: nbReg
+Title: Resultattjeneste for Barnediabetesregisteret (BDR)
+Version: 0.0.0.9000
+Authors@R: person("Yusman", "Kamaleri", email = "ybkamaleri@gmail.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends:
+    R (>= 3.2.3)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+  ggplot2 (>= 2.0.0),
+  foreign,
+  dplyr (>= 0.4.0),
+  tidyr (>= 0.4.0),
+  lazyeval
+Suggests:
+  grid
+RoxygenNote: 5.0.1.9000
