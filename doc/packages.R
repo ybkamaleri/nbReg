@@ -6,7 +6,7 @@ pkg.impt <- function(pkg){
         devtools::use_package(ny.pkg, pkg = "nbReg")
 }
 
-pakke <- c("ggplot2", "foreign", "dplyr", "tidyr" , "lazyeval")
+pakke <- c("ggplot2", "foreign", "dplyr", "tidyr" , "tools", "lazyeval")
 
 pkg.impt(pakke)
 

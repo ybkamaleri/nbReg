@@ -13,7 +13,8 @@ Imports:
   foreign,
   dplyr (>= 0.4.0),
   tidyr (>= 0.4.0),
-  lazyeval
+  lazyeval,
+  tools
 Suggests:
   grid
 RoxygenNote: 5.0.1.9000
