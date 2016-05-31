@@ -19,7 +19,7 @@
 nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NULL,
                         save = NULL, format = "pdf", path = NULL) {
 
-    if (is.null(data)) {utData <- nbSelectVar()}
+    if (is.null(data)) {utData <- nbSelectVar()} else {utData <- data}
 
     ## Hente data ut
     RegDataValg <- utData$data
@@ -28,7 +28,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
     figTxt      <- utData$figTxt
     xLab        <- utData$xLab
     xBreaks     <- utData$xBreaks
-    
+
     ## Ifelse %||%
     "%||%" <- function(a,b) if (!is.null(a)) a else b
 
@@ -37,11 +37,11 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
     rapportValg <- rapportValg %||% RapportValg
     yAksen      <- yAksen %||% YAksen
 
-    
+
 ####################################################
 ### Data utvalg for å sammenligne sykehus og landet
 ####################################################
-    
+
     ## Valg av sykehuset 1:lokal 2:Resten
     samSyk <- lazyeval::interp(~f(var1 %in% sykehus, 1, 2),
                                .values = list(f = as.name("ifelse"),
@@ -54,25 +54,25 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 ################################################################
 ### rapportValg 1:Hele, 2:Lokal, 3:Øvrige/Lokal [RegDataValgSam]
 ################################################################
-    
+
     ##-- Hele landet --##
     if (rapportValg == 1 & yAksen %in% 1:2) {
         RegDataValgSam <- mutate(.data = RegDataValg,
                                  SykehusValg = 1)
-        
+
         ## Prosent
         RegDataPA <- RegDataValgSam %>%
             group_by(Variabel) %>%
             tally %>%
             mutate(yAksen = (100*n/sum(n)),
                    samSyk = 1)
-        
+
         ##Antall
         if (yAksen == 2) {
             RegDataPA <- RegDataPA %>%
                 select(Variabel, samSyk, yAksen=n)
         } else { RegDataPA = RegDataPA }
-    } 
+    }
 
     ## -- Lokal vs andre sykehus --##
     RegDataValgSam1 <- filter(RegDataValg, SykehusValg==1) #lokal
@@ -104,29 +104,29 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                     select(Variabel, samSyk, yAksen=n)
             } else { RegDataPA2 = RegDataPA2 }
         }
-    } 
+    }
 
-    
+
 ##########################
 ### Henter N for figur
 ##########################
-    
+
     if (rapportValg %in% 2:3) {
         sykNavn <- RegDataValg$SykehusNavn[RegDataValg$SykehusKode==sykehus][1]
-        
+
         N <- dim(RegDataValgSam1)[1]
         andreN <- dim(RegDataValgSam2)[1]
-        
+
         sykehusNavn <- paste0(sykNavn, " (N = ", N, ") ")
         sykehusAndre <- paste0("Øvrige sykehus (N = ", andreN, ") ")}
-    
+
 
     if (rapportValg == 1) {
         N <- dim(RegDataValg)[1]
         sykehusNavn <- paste0("Hele landet (N = ", N, ") ")
     }
 
-    
+
 
 ##########################################
 ### Tekst til Figur
@@ -139,14 +139,14 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
     if (yAksen == 1) yLab="Prosent (%)"
     if (yAksen == 2) yLab="Antall pasienter"
-    
-    
+
+
     if (yAksen == 3) {
         maalvar = "hba"
         RegDataValg <- select(RegDataValg, -diaVarighet)
         yLab = "Gjennomsnitt HbA1c (95% CI)"
     }
-    
+
     if (yAksen == 4) {
         maalvar = "diaVarighet"
         RegDataValg <- select(RegDataValg, -hba)
@@ -159,7 +159,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 ### FIGURER
 ####################
 
-    
+
 ## ###########################
 ## ### Felles figur tema
 
@@ -184,13 +184,13 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
     if (xScale == 1) {
 
-        
+
         if (yAksen==1) RegDataPA$yAksen = round(RegDataPA$yAksen, 1)
         if (yAksen==2) RegDataPA$yAksen = as.numeric(format(RegDataPA$yAksen, digits=0))
-        
-        
+
+
         if (yAksen %in% 1:2 & rapportValg %in% 1:2) {
-            
+
             RegFig <- ggplot(RegDataPA, aes(x=Variabel, y=yAksen, fill=factor(0))) +
                 geom_bar(stat = "identity") +
                 scale_x_continuous(breaks = xBreaks) +
@@ -212,15 +212,15 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                                                       linetype = 2),
                       panel.border = element_blank())
 
-            
+
         }
 
-        
+
         if (yAksen %in% 1:2 & rapportValg == 3) {
 
             if (yAksen==1) RegDataPA$yAksen = round(RegDataPA$yAksen, 1)
             if (yAksen==2) RegDataPA$yAksen = as.numeric(format(RegDataPA$yAksen, digits=0))
-            
+
             if (yAksen==1) {RegDataPA2$yAksen = round(RegDataPA2$yAksen, 1)}
             if (yAksen==2) {RegDataPA2$yAksen = as.numeric(format(RegDataPA2$yAksen, digits=0))}
 
@@ -251,24 +251,24 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                       panel.border = element_blank())
 
 
-            
+
         }
     }
 
 
-    
+
     ##-------------------------##
     ##-- Kategorisk variabel --##
     ##-------------------------##
-    
+
     if (xScale == 2) {
-        
+
         if (yAksen %in% 1:2 & rapportValg %in% 1:2) {
 
             if (yAksen==1) RegDataPA$yAksen=as.numeric(sprintf("%.1f", RegDataPA$yAksen))
             if (yAksen==2) RegDataPA$yAksen=as.numeric(sprintf("%.f", RegDataPA$yAksen))
-            
-            RegFig <- ggplot(RegDataPA, aes(x=Variabel, y=yAksen, fill = factor(samSyk))) + 
+
+            RegFig <- ggplot(RegDataPA, aes(x=Variabel, y=yAksen, fill = factor(samSyk))) +
                 geom_bar(stat = "identity") +
                 expand_limits(x = 0, y = 0) +
                 ylab(yLab) + xlab(xLab) +
@@ -288,10 +288,10 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
           panel.grid.major = element_line(color = "#CCCCCC",
                                           linetype = 2),
           panel.border = element_blank())
-            
+
         }
 
-        
+
         if (yAksen %in% 1:2 & rapportValg == 3) {
 
             if (yAksen==1) RegDataPA$yAksen=as.numeric(sprintf("%.1f", RegDataPA$yAksen))
@@ -302,7 +302,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
             lengthVar <- if (length(RegDataPA$Variabel) > length(RegDataPA2$Variabel)) {
                              length(RegDataPA$Variabel) } else { length(RegDataPA2$Variabel)}
-            
+
 
             RegFig <- ggplot(NULL, aes(x=Variabel, y=yAksen)) +
                 geom_bar(data = RegDataPA, aes(fill="syk1",
@@ -317,7 +317,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                 ##                    labels = c("syk1" = sykehusNavn,  "syk2" = sykehusAndre)) +
                 scale_fill_manual(values = c("#6699CC", "#000099"),
                                   labels = c("syk1" = sykehusNavn,  "syk2" = sykehusAndre)) +
-                
+
                 guides(fill = guide_legend(override.aes = list(shape = NA))) +
                 scale_x_discrete(limits = xBreaks[1:max(lengthVar)]) +
                 theme_light() +
@@ -332,22 +332,22 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                       panel.grid.major = element_line(color = "#CCCCCC",
                                                       linetype = 2),
                       panel.border = element_blank())
-            
+
         }
     }
 
 
-    
+
 ############################
 ###Figur for hbalc og ..
 ############################
-    
+
 
     ##-------------------------##
     ##-- Kontinuell variabel --##
     ##-------------------------##
-    
-    if (xScale == 1) { 
+
+    if (xScale == 1) {
 
         ## -- Landet og Lokal sykehus --##
         if (yAksen %in% 3:4 & rapportValg %in% 1:2) {
@@ -356,7 +356,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                 RegDataValg <- filter(.data=RegDataValg, SykehusValg==1)
             } else { RegDataValg }
 
-            
+
             ## Antall n eksludert NA for legend
             if (rapportValg == 1) {
                 N <- sum(complete.cases(RegDataValg))
@@ -365,30 +365,30 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
             if (rapportValg == 2) {
                 sykNavn <- RegDataValg$SykehusNavn[RegDataValg$SykehusKode==sykehus][1]
-                
+
                 lokalRD = filter(.data=RegDataValg, SykehusValg==1)
-                
+
                 N = sum(complete.cases(lokalRD))
-                
+
                 sykehusNavn <- paste0(sykNavn, " (N = ", N, ") ")
             }
 
 
             RegDataHA <- sumCI(data=RegDataValg, maalvar = maalvar,
                                    gpvars = "Variabel")
-            
-            ## Ta bort Mean når n=1 
+
+            ## Ta bort Mean når n=1
             RegDataHA$Mean[RegDataHA$N<=1] <- 0
 
             ## Lage dummy for legend
             RegDataHA <- mutate(.data = RegDataHA, samSyk = 1 )
 
-            
+
             ## ## Errorbar for 1 SE
             ## RegFig <- ggplot(RegDataValg, aes(Variabel, hba)) +
             ##     stat_summary(fun.y = mean, geom = "bar", na.rm = T) +
             ##     stat_summary(fun.data = mean_se, geom = "errorbar", na.rm = T, width=.4) +
-            
+
             RegFig <- ggplot(RegDataHA, aes(x=Variabel, y=Mean)) +
                 geom_bar(aes(fill=factor(samSyk)), position = position_dodge(), stat = "identity") +
                 geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), width=.3,
@@ -420,15 +420,15 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
             ## Antall N lokal og andre
             if (rapportValg == 3) {
-                
+
                 sykNavn = RegDataValg$SykehusNavn[RegDataValg$SykehusKode==sykehus][1]
 
                 lokalRD = filter(.data=RegDataValg, SykehusValg==1)
                 andreRD = filter(.data=RegDataValg, SykehusValg==2)
-                
+
                 N = sum(complete.cases(lokalRD))
                 andreN = sum(complete.cases(andreRD))
-                
+
                 sykehusNavn = paste0(sykNavn, " (N = ", N, ") ")
                 sykehusAndre = paste0("Øvrige sykehus (N = ", andreN, ") ")
             }
@@ -436,14 +436,14 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
             RegDataHA <- sumCI(data=RegDataValg, maalvar = maalvar,
                                    gpvars = c("Variabel","SykehusValg"))
-            
+
             ## Ta bort Mean når n=1
             RegDataHA$Mean[RegDataHA$N<=1] <- 0
 
             ## ## Errorbar for 1 SE
             ## RegFig <- ggplot(RegDataValg, aes(Variabel, hba, fill=factor(SykehusValg))) +
             ##     stat_summary(fun.y = mean, geom = "bar", position = "dodge", na.rm = T) +
-            ##     stat_summary(fun.data = mean_se, geom = "errorbar", na.rm = T, 
+            ##     stat_summary(fun.data = mean_se, geom = "errorbar", na.rm = T,
             ##     position = position_dodge(width = 0.9), width=0.4) +
 
             ## Errorbar for CI
@@ -455,7 +455,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                 xlab(xLab) +
                 ggtitle(bquote(atop(.(titBlank),atop(.(figSubT), "")))) +
                 ## scale_shape_manual(values = c(NA, 23),
-                ##                    labels = c("syk1" = sykehusNavn,  "syk2" = sykehusAndre)) 
+                ##                    labels = c("syk1" = sykehusNavn,  "syk2" = sykehusAndre))
                 scale_fill_manual(values = c("#6699CC","#000099"),
                                   breaks = c("1", "2"),
                                   labels = c(sykehusNavn, sykehusAndre)) +
@@ -477,15 +477,15 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
     }
 
 
-    
-    
+
+
     ##-------------------------##
     ##-- Kategorisk variabel --##
     ##-------------------------##
-    
+
     if (xScale == 2) {
 
-        
+
         ## -- Landet og Lokal sykehus --##
         if (yAksen %in% 3:4 & rapportValg %in% 1:2) {
 
@@ -501,22 +501,22 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
             if (rapportValg == 2) {
                 sykNavn <- RegDataValg$SykehusNavn[RegDataValg$SykehusKode==sykehus][1]
-                
+
                 lokalRD = filter(.data=RegDataValg, SykehusValg==1)
-                
+
                 N = sum(complete.cases(lokalRD))
-                
+
                 sykehusNavn <- paste0(sykNavn, " (N = ", N, ") ")
             }
 
-            
+
             ## Aggregerte data for figur
             RegDataHA <- sumCI(data=RegDataValg, maalvar = maalvar,
                                    gpvars = "Variabel")
-            
+
             ## Teller antall kategorisk for valg i x-skale
             lengthVar <- length(RegDataHA$Variabel[RegDataHA$N!=0])
-            
+
             ## Ta bort n=1 siden det ikke kan beregne Mean
             RegDataHA$Mean[RegDataHA$N<=1] <- 0
 
@@ -524,8 +524,8 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
             RegDataHA <- mutate(.data = RegDataHA, samSyk = 1 )
 
             print(RegDataHA)
-            
-  
+
+
             RegFig <- ggplot(RegDataHA, aes(x=Variabel, y=Mean)) +
                 geom_bar(aes(fill=factor(samSyk)), position = position_dodge(), stat = "identity") +
                 geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), width=.3,
@@ -548,7 +548,7 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                       panel.grid.major = element_line(color = "#CCCCCC",
                                                       linetype = 2),
                       panel.border = element_blank())
-            
+
         }
 
 
@@ -563,24 +563,24 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
 
             ## Antall N lokal og andre
             if (rapportValg == 3) {
-                
+
                 sykNavn = RegDataValg$SykehusNavn[RegDataValg$SykehusKode==sykehus][1]
 
                 lokalRD = filter(.data=RegDataValg, SykehusValg==1)
                 andreRD = filter(.data=RegDataValg, SykehusValg==2)
-                
+
                 N = sum(complete.cases(lokalRD))
                 andreN = sum(complete.cases(andreRD))
-                
+
                 sykehusNavn = paste0(sykNavn, " (N = ", N, ") ")
                 sykehusAndre = paste0("Øvrige sykehus (N = ", andreN, ") ")
             }
 
-            
+
             ## Ta bort Mean når n=1
             RegDataHA$Mean[RegDataHA$N<=1] <- 0
 
- 
+
             ## Errorbar for CI
             RegFig <- ggplot(RegDataHA, aes(x=Variabel, y=Mean, fill=factor(SykehusValg))) +
                 geom_bar(position = position_dodge(), stat = "identity") +
@@ -604,17 +604,17 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
                       panel.grid.major = element_line(color = "#CCCCCC",
                                                       linetype = 2),
                       panel.border = element_blank())
-            
+
         }
     }
-  
+
 ###############
 ### Output
 ###############
 
 
 
-    
+
     if (is.null(save)) {
         print(RegFig)
         ##ggsave(Save)
@@ -624,8 +624,8 @@ nbFigur <- function(data = NULL, sykehus = NULL, rapportValg = NULL, yAksen = NU
         path <-  path %||% wdir
         ggsave(filename = save, device = format)
         ##print(RegFig)
-    } 
+    }
 
 
-    
+
 }

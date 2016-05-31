@@ -12,9 +12,11 @@ nbClean <- function(data = NULL) {
 
     if (is.null(data)) {
         RegData <- nbFile()
+    } else {
+        RegData <- data
     }
 
-          
+
     ## white space
     trim <- function( x ) {
         gsub("(^[[:space:]]+|[[:space:]]+$)", "", x)
@@ -30,7 +32,7 @@ nbClean <- function(data = NULL) {
 
     ## lab_HbA1cAkerVerdi = hba
     RegData$hba <- as.numeric(trim(RegData$lab_HbA1cAkerVerdi))
-    
+
     ## År
     ## RegData$Year <- as.numeric(format(as.POSIXct(RegData$inn_Dato, format = "%Y-%m-%d %H:%M"), "%Y"))
     RegData$Year <- as.numeric(format(as.POSIXct(RegData$inn_Dato, origin = "1899-12-30 0:00:00", format ="%Y-%m-%d %H:%M"), "%Y"))
@@ -51,7 +53,7 @@ nbClean <- function(data = NULL) {
     ## Diabetes Type 1
     RegData$diabetes_Type1<- trim(RegData$diabetes_Type1)
     RegData$diaType1 <- ifelse(RegData$diabetes_Type1 == "Ja", 1, 2) #1:Type1 2:AndreType
-    
+
     ## Alder
     RegData$FDato1 <- as.POSIXct(RegData$FDato, origin = "1899-12-30 0:00:00")
     RegData$Alder <- as.integer(floor(difftime(Sys.time(), as.POSIXct(RegData$FDato1, format = "%Y-%m-%d %H:%M"), units = "days")/365))
@@ -68,8 +70,8 @@ nbClean <- function(data = NULL) {
     }
 
     RegData$AlderKat <- alder.kat(RegData$Alder, 0, 30, 5)
-    
-    
+
+
     ## SykehusNavn , SykehusKode
     RegData$SykehusNavn <- trim(RegData$Sykehus)
     RegData$SykehusKode <- NA

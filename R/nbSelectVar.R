@@ -13,7 +13,7 @@
 nbSelectVar <- function(data = NULL, valgtVar = NULL) {
 
     ##Hente data
-    if (is.null(data)) {utData <- nbText()}
+    if (is.null(data)) {utData <- nbText()} else {utData <- data}
 
     RegData <- utData$data
     figTxt <- utData$figTxt
@@ -25,17 +25,17 @@ nbSelectVar <- function(data = NULL, valgtVar = NULL) {
 
     ## Omdefinere variablene
     valgtVar    <- valgtVar %||% ValgtVar
-   
-    
+
+
 ################################
 ### Sammenligne sykehus funksjon
 ################################
-    
+
     sykSamlikFn <- function(valgtValg) {
         sykSamlik = c("SykehusKode", "SykehusNavn", "hba", "diaVarighet", "Variabel")
         RegData$Variabel <- RegData[ , valgtValg]
-        RegDataValg <- RegData %>% 
-            select_(.dots = sykSamlik) 
+        RegDataValg <- RegData %>%
+            select_(.dots = sykSamlik)
         return(RegDataValg)
     }
 
@@ -43,9 +43,9 @@ nbSelectVar <- function(data = NULL, valgtVar = NULL) {
 ##########################
 ### Valgt Variabel
 ##########################
-    
+
     ##--- Kontinuelle Variabler (xScale==1) ---##
-    
+
     if (valgtVar == "alder") {
         xScale = 1
         valgtVar = "Alder"
@@ -55,9 +55,9 @@ nbSelectVar <- function(data = NULL, valgtVar = NULL) {
         xBreaks = c(minX:maxX)
     }
 
-        
+
     ## --- Kategoriske Variabler (xScale==2) ---##
-    
+
     if (valgtVar == "alderkat") {
         xScale = 2
         valgtVar = "AlderKat"
@@ -76,19 +76,19 @@ nbSelectVar <- function(data = NULL, valgtVar = NULL) {
         figT <- "Fordeling av kjønn"
         xLab = "Kjønn"
         xBreaks = levels(RegDataValg$Variabel)
-       
+
     }
 
 
-    
+
 #############################
 ### Overføre nødvendige data
 #############################
-    
-   
+
+
     utData <- list(data = RegDataValg, xScale = xScale,
                    figT = figT, figTxt = figTxt, xLab = xLab, xBreaks = xBreaks)
-    
+
     return(invisible(utData))
-    
+
 }
