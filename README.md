@@ -6,11 +6,11 @@ Rapportløsning i R. Dette er beta version. Flere komandoer er duplikerte som sk
 
 Bruk filen "DataBegynne.R" i mappen **doc** for å velge variable og filtrering
 
-Pakke kan innstalleres fra github ved bruk av *devtools* pakke: 
+Pakke kan innstalleres fra github ved bruk av *devtools* pakke:
 
 ```R
 # install.packages("devtools")
-devtools::install_github("ybkamaleri/aimPlot")
+devtools::install_github("ybkamaleri/nbReg")
 ```
 
 For å få figuren skal *nbFigur()* funksjon brukes
