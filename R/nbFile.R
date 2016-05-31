@@ -11,23 +11,31 @@
 
 nbFile <- function(filnavn = NULL) {
 
-    ## Hente fil og konvertert til R data.frame    
+    ## Hente fil og konvertert til R data.frame
     if (is.null(filnavn)) { filnavn = Filnavn }
     filType <- tools::file_ext(filnavn)
 
-    ## SPSS file 
+    ## SPSS file
     if (filType == "sav") {
         dataFile <- foreign::read.spss(filnavn, to.data.frame = TRUE)
     }
 
+    ## DAT file - tab-delimited
+    if (filType == "dat") {
+        dataFile <- read.table(filnavn,
+                               header = TRUE,
+                               encoding = 'latin1',
+                               stringsAsFactors = TRUE,
+                               na.strings = "EMPTY")}
+
     ## CSV file
     if (filType == "csv") {
-        dataFile <- read.csv(filnavn, 
+        dataFile <- read.csv(filnavn,
                             header = TRUE,
                             encoding = 'latin1',
-                            sep=";", 
+                            sep=";",
                             strip.white = TRUE,
-                            stringsAsFactors = TRUE, 
+                            stringsAsFactors = TRUE,
                             na.strings = "EMPTY") #indicate empty as NA
     }
 
