@@ -9,11 +9,11 @@ load_all(kode)
 document(kode)
 
 ## Lage paken
-check(kode)
-build(kode, manual=TRUE, path = "~/Git-work/Packages")
+## check(kode)
+## build(kode, manual=TRUE, path = "~/Git-work/Packages")
 
 library(nbReg)
-setwd("~/OUS/BDR/Rapport/")
+setwd("~/OUS/BDR/Rapport/Data/")
 ##install("~/Git-work/BDR")
 Filnavn <- "bdr01.sav" 	# *.sav, *.csv, *.xlsx
 
@@ -34,7 +34,7 @@ DatoTil = "2016-12-31"  # YYYY-MM-DD
 Sykehus = 15
 RapportValg = 3 		# 1:Landet 2:Lokal 3:Lokal mot andre sykh.
 
-YAksen = 3 			# 1:prosent, 2:antall, 3:hbalc 4:diabetesVarighet
+YAksen = 2 			# 1:prosent, 2:antall, 3:hbalc 4:diabetesVarighet
 
 ValgtVar = "alderkat"  	# Valg variablene p? listen nedenfor
 ## alder, alderkat, kjonn,
