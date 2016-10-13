@@ -2,15 +2,6 @@
 #### Ctr+A og Ctr+R for første kjøring ##
 #########################################
 rm(list=ls())
-library(devtools)
-library(roxygen2)
-kode <- as.package("~/Git-work/nbReg")
-load_all(kode)
-document(kode)
-
-## Lage paken
-## check(kode)
-## build(kode, manual=TRUE, path = "~/Git-work/Packages")
 
 library(nbReg)
 setwd("~/OUS/BDR/Rapport/Data/")
@@ -18,7 +9,7 @@ setwd("~/OUS/BDR/Rapport/Data/")
 Filnavn <- "bdr01.sav" 	# *.sav, *.csv, *.xlsx
 
 ##################################
-#### Filter for neste kjøring ####
+####   Filter å velge         ####
 ##################################
 
 MinAlder = 2
