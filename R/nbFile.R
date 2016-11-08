@@ -17,14 +17,14 @@ nbFile <- function(filnavn = NULL) {
 
     ## SPSS file
     if (filType == "sav") {
-        dataFile <- foreign::read.spss(filnavn, to.data.frame = TRUE)
+        dataFile <- foreign::read.spss(filnavn, to.data.frame = TRUE, reencode = "UTF-8")
     }
 
     ## DAT file - tab-delimited
     if (filType == "dat") {
         dataFile <- read.table(filnavn,
                                header = TRUE,
-                               encoding = 'latin1',
+                               encoding = 'UTF-8',
                                stringsAsFactors = TRUE,
                                na.strings = "EMPTY")}
 
@@ -32,7 +32,7 @@ nbFile <- function(filnavn = NULL) {
     if (filType == "csv") {
         dataFile <- read.csv(filnavn,
                             header = TRUE,
-                            encoding = 'latin1',
+                            encoding = 'UTF-8',
                             sep=";",
                             strip.white = TRUE,
                             stringsAsFactors = TRUE,

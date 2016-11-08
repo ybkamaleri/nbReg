@@ -1,6 +1,6 @@
 Package: nbReg
-Title: Resultattjeneste for Barnediabetesregisteret (BDR)
-Version: 0.1.2
+Title: Resultattjeneste for Norsk barnediabetesregisteret (BDR)
+Version: 0.1.3
 Authors@R: person("Yusman", "Kamaleri", email = "ybkamaleri@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends:
@@ -16,5 +16,6 @@ Imports:
   lazyeval,
   tools
 Suggests:
-  grid
+  grid,
+    testthat
 RoxygenNote: 5.0.1.9000
