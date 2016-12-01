@@ -1,3 +1,7 @@
+
+#NB! Dette er ikke i bruk lenge 
+------------------
+
 # Barnediabetesregister (BDR)
 
 Rapportløsning i R. Dette er beta version. Flere komandoer er duplikerte som skal renses senere.
